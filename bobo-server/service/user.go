@@ -88,7 +88,6 @@ func (*User) Login(c *gin.Context, req req.UserLoginReq) (token string, code int
 	if req.Password != user.Password {
 		return token, r.ERROR_PASSWORD_WRONG
 	}
-
 	//// 获取 IP 相关信息
 	//ipAddress := utils.IP.GetIpAddress(c)
 	//ipSource := utils.IP.GetIpSourceSimpleIdle(ipAddress)
