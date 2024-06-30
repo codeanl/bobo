@@ -10,6 +10,7 @@ type Config struct {
 	Zap     Zap
 	Captcha Captcha
 	Email   Email
+	Session Session
 }
 
 type Server struct {
@@ -57,4 +58,10 @@ type Email struct {
 	Nickname string // 发件人昵称, 通常为自己的邮箱名
 	Port     int    // 前往要发邮件的邮箱查看其 smtp 协议端口, 大多为 465
 	IsSSL    bool   // 是否开启 SSL
+}
+
+type Session struct {
+	Name   string
+	Salt   string
+	MaxAge int
 }

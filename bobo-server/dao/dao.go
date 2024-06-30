@@ -15,3 +15,11 @@ func GetOne[T any](data T, query string, args ...any) T {
 	}
 	return data
 }
+
+// Create 创建数据
+func Create[T any](data *T) {
+	err := DB.Create(&data).Error
+	if err != nil {
+		panic(err)
+	}
+}

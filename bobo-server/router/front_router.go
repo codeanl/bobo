@@ -22,7 +22,8 @@ func FrontRouter() http.Handler {
 		//用户
 		user := base.Group("/user")
 		{
-			user.POST("/login", userApi.UserLogin) // 用户
+			user.POST("/login", userApi.Login)       // 用户登陆
+			user.POST("/register", userApi.Register) // 用户注册
 		}
 	}
 	// 需要鉴权的接口

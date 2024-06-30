@@ -37,3 +37,8 @@ From = "2633262862@qq.com"     # 发件人 (邮箱)
 IsSSL = false                # 是否开启 SSL
 Secret = "gspulfqdwbqndibh" # 密钥, 不是邮箱登录密码, 是开启 smtp 服务后获取的一串验证码
 Nickname = "gopher"           # 发件人昵称, 通常为自己的邮箱名
+
+[Session]
+Name = "mysession"
+Salt = "salt"
+MaxAge = 600       # 秒

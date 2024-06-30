@@ -1,0 +1,1 @@
+[BOBO] 2024/07/01 - 01:57:26	INFO	/Users/codeanl/go/bobo/bobo-server/middleware/logger.go:17	/api/user/login	{"status": 200, "method": "POST", "path": "/api/user/login", "query": "", "ip": "::1", "user-agent": "PostmanRuntime-ApipostRuntime/1.1.0", "errors": "", "cost": 0.002804921}
