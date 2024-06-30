@@ -42,3 +42,8 @@ Nickname = "gopher"           # 发件人昵称, 通常为自己的邮箱名
 Name = "mysession"
 Salt = "salt"
 MaxAge = 600       # 秒
+
+[JWT]
+Secret = "abc123321"
+Expire = 24             # 过期时间 (小时)
+Issuer = "gin-vue-blog"

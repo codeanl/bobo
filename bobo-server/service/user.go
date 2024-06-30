@@ -10,7 +10,7 @@ import (
 	"bobo-server/utils/r"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"strconv"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -88,29 +88,28 @@ func (*User) Login(c *gin.Context, req req.UserLoginReq) (token string, code int
 	if req.Password != user.Password {
 		return token, r.ERROR_PASSWORD_WRONG
 	}
-
 	// 获取 IP 相关信息
-	//ipAddress := utils.IP.GetIpAddress(c)
-	//ipSource := utils.IP.GetIpSourceSimpleIdle(ipAddress)
-	//browser, os := "unknown", "unknown"
-	//if userAgent := utils.IP.GetUserAgent(c); userAgent != nil {
-	//	browser = userAgent.Name + " " + userAgent.Version.String()
-	//	os = userAgent.OS + " " + userAgent.OSVersion.String()
-	//}
-	//// 登录信息正确, 生成 Token
-	//uid := utils.Encryptor.MD5(ipAddress + browser + os) // UUID 生成方法: ip + 浏览器信息 + 操作系统信息
-	//token, err := utils.GetJWT().GenAdminToken(int(user.ID), uid)
-	//if err != nil {
-	//	utils.Logger.Info("登录时生成 Token 错误: ", zap.Error(err))
-	//	return token, r.ERROR_TOKEN_CREATE
-	//}
-	//// 更新用户验证信息: ip 信息 + 上次登录时间
-	//user.IpAddress = ipAddress
-	//user.IpSource = ipSource
-	//user.LastLoginTime = time.Now()
-	//dao.UpdateOne(user, "id = ?", user.ID)
+	ipAddress := utils.IP.GetIpAddress(c)
+	ipSource := utils.IP.GetIpSourceSimpleIdle(ipAddress)
+	browser, os := "unknown", "unknown"
+	if userAgent := utils.IP.GetUserAgent(c); userAgent != nil {
+		browser = userAgent.Name + " " + userAgent.Version.String()
+		os = userAgent.OS + " " + userAgent.OSVersion.String()
+	}
+	// 登录信息正确, 生成 Token
+	loginInfo := utils.Encryptor.MD5(ipAddress + browser + os) // UUID 生成方法: ip + 浏览器信息 + 操作系统信息
+	token, err := utils.GetJWT().GenUserToken(int(user.ID), loginInfo)
+	if err != nil {
+		utils.Logger.Info("登录时生成 Token 错误: ", zap.Error(err))
+		return token, r.ERROR_TOKEN_CREATE
+	}
+	// 更新用户验证信息: ip 信息 + 上次登录时间
+	user.IpAddress = ipAddress
+	user.IpSource = ipSource
+	user.LastLoginTime = time.Now()
+	dao.UpdateOne(user, "id = ?", user.ID)
 	// 存入redis
-	dto := dto.UserLoginDTO{
+	utils.Redis.Set(KEY_USER+loginInfo, utils.Json.Marshal(dto.UserLoginDTO{
 		ID:            int(user.ID),
 		CreatedAt:     user.CreatedAt,
 		Username:      user.Username,
@@ -122,7 +121,6 @@ func (*User) Login(c *gin.Context, req req.UserLoginReq) (token string, code int
 		LastLoginTime: user.LastLoginTime,
 		Role:          user.Role,
 		Token:         token,
-	}
-	utils.Redis.Set(KEY_USER+strconv.Itoa(dto.ID), utils.Json.Marshal(dto), time.Duration(config.Cfg.Session.MaxAge)*time.Second)
+	}), time.Duration(config.Cfg.Session.MaxAge)*time.Second)
 	return token, r.OK
 }

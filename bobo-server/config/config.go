@@ -11,6 +11,7 @@ type Config struct {
 	Captcha Captcha
 	Email   Email
 	Session Session
+	JWT     JWT
 }
 
 type Server struct {
@@ -64,4 +65,10 @@ type Session struct {
 	Name   string
 	Salt   string
 	MaxAge int
+}
+
+type JWT struct {
+	Secret string // JWT 签名
+	Expire int64  // 过期时间
+	Issuer string // 签发者
 }

@@ -23,3 +23,11 @@ func Create[T any](data *T) {
 		panic(err)
 	}
 }
+
+// UpdateOne 单条数据更新
+func UpdateOne[T any](data T, query string, args ...interface{}) {
+	err := DB.Model(data).Where(query, args...).Updates(data).Error
+	if err != nil {
+		panic(err)
+	}
+}
