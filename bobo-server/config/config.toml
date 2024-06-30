@@ -1,0 +1,39 @@
+[Server]
+AppMode = "debug"   # debug 开发环境, release 生产环境
+AdminPort = ":1234"  # 后台服务端口
+FrontPort = ":4321" # 前台服务端口
+
+[Mysql]
+Host = "127.0.0.1"
+Port = "3306"
+Config = ""         # 其他配置, 例如时区
+Dbname = "bobo"      # 数据库名称
+Username = "root"
+Password = "" # 数据库密码
+LogMode = "error" # silent 相当于关闭日志 日志级别 silent, error, warn, info, 默认 info
+
+[Redis]
+DB = 6
+Addr = '127.0.0.1:6379'
+Password = ''
+
+[Zap]
+Level = "debug"            # 日志级别: debug, info, warn, error, dpanic, panic, fatal, 默认 info
+Format = "console"         # 输出格式: console, json
+Prefix = "[BOBO] "         # 日志前缀
+Directory = "log"          # 存放日志的文件夹
+ShowLine = true            # 是否显示哪行调用
+LogInConsole = false        # 是否输出到控制台
+
+[Captcha]
+SendEmail = true # 通过邮箱发送验证码
+ExpireTime = 15  # 过期时间 (分钟)
+
+# 配置发送验证码账号信息
+[Email]
+Host = "smtp.qq.com"       # 服务器地址, 例如 smtp.qq.com 前往要发邮件的邮箱查看其 smtp 协议
+Port = 587                  # 前往要发邮件的邮箱查看其 smtp 协议端口, 大多为 465
+From = "2633262862@qq.com"     # 发件人 (邮箱)
+IsSSL = false                # 是否开启 SSL
+Secret = "gspulfqdwbqndibh" # 密钥, 不是邮箱登录密码, 是开启 smtp 服务后获取的一串验证码
+Nickname = "gopher"           # 发件人昵称, 通常为自己的邮箱名
