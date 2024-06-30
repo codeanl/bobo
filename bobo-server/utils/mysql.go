@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bobo-server/config"
+	"bobo-server/model"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -62,7 +63,9 @@ func getLogMode(str string) logger.LogLevel {
 }
 
 func MakeMigrate(db *gorm.DB) {
-	err := db.AutoMigrate()
+	err := db.AutoMigrate(
+		&model.User{},
+	)
 	if err != nil {
 		log.Println("gorm 自动迁移失败: ", err)
 	} else {
