@@ -65,6 +65,8 @@ func getLogMode(str string) logger.LogLevel {
 func MakeMigrate(db *gorm.DB) {
 	err := db.AutoMigrate(
 		&model.User{},
+		&model.DailySharing{},
+		&model.DailySharingAttachment{},
 	)
 	if err != nil {
 		log.Println("gorm 自动迁移失败: ", err)

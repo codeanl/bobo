@@ -35,3 +35,15 @@ func Update[T any](data *T, slt ...string) {
 		panic(err)
 	}
 }
+
+// 数据列表
+func List[T any](data T, slt, order, query string, args ...any) T {
+	db := DB.Model(&data).Select(slt).Order(order)
+	if query != "" {
+		db = db.Where(query, args...)
+	}
+	if err := db.Find(&data).Error; err != nil {
+		panic(err)
+	}
+	return data
+}

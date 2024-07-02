@@ -3,5 +3,6 @@ package front
 import "bobo-server/service"
 
 var (
-	userService service.User
+	userService         service.User
+	dailySharingService service.DailySharing
 )

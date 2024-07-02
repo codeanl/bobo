@@ -44,3 +44,17 @@ func (*_redis) Set(key string, value interface{}, expiration time.Duration) {
 		panic(err)
 	}
 }
+
+// 获取[有序集合]中, 成员的分数值
+func (*_redis) ZScore(key, member string) int {
+	return int(rdb.ZScore(ctx, key, member).Val())
+}
+
+// [有序集合]中 key 中指定字段的整数值加上增量 incr
+func (*_redis) ZincrBy(key, member string, incr float64) {
+	err := rdb.ZIncrBy(ctx, key, incr, member).Err()
+	if err != nil {
+		Logger.Error("utils/redis.go ->ZincrBy: ", zap.Error(err))
+		panic(err)
+	}
+}
