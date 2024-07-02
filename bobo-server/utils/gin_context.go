@@ -36,3 +36,13 @@ func BindValidJson[T any](c *gin.Context) (data T) {
 	Validate(c, &data)
 	return data
 }
+
+// 从 Gin Context 上获取值, 该值是 JWT middleware 解析 Token 后设置的
+// 如果该值不存在, 说明 Token 有问题
+func GetFromContext[T any](c *gin.Context, key string) T {
+	val, exist := c.Get(key)
+	if !exist {
+		panic(r.ERROR_TOKEN_RUNTIME)
+	}
+	return val.(T)
+}

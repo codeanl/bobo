@@ -1,0 +1,1 @@
+[BOBO] 2024/07/02 - 23:09:18	INFO	/Users/codeanl/go/bobo/bobo-server/middleware/logger.go:17	/api/user/up_email	{"status": 200, "method": "PUT", "path": "/api/user/up_email", "query": "", "ip": "::1", "user-agent": "PostmanRuntime-ApipostRuntime/1.1.0", "errors": "", "cost": 0.002905956}

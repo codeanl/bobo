@@ -12,3 +12,19 @@ type UserRegisterReq struct {
 	Email    string `json:"email" validate:"required" label:"邮箱"`
 	Code     string `json:"code" validate:"required" label:"验证码"`
 }
+
+type UpdateProfileReq struct {
+	Nickname string `json:"nickname"  label:"昵称"`
+	Avatar   string `json:"avatar" label:"头像"`
+}
+
+type UpdatePasswordReq struct {
+	OldPassword       string `json:"old_password" validate:"required" label:"旧密码"`
+	NewPassword       string `json:"new_password" validate:"required" label:"新密码"`
+	SecondNewPassword string `json:"second_new_password" validate:"required" label:"确认新密码"`
+}
+
+type UpdateEmailReq struct {
+	Email string `json:"email" validate:"required" label:"邮箱"`
+	Code  string `json:"code" validate:"required" label:"验证码"`
+}

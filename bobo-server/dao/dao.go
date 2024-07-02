@@ -24,9 +24,13 @@ func Create[T any](data *T) {
 	}
 }
 
-// UpdateOne 单条数据更新
-func UpdateOne[T any](data T, query string, args ...interface{}) {
-	err := DB.Model(data).Where(query, args...).Updates(data).Error
+// Update [单行]更新: 传入对应结构体[传递主键用] 和 带有对应更新字段值的[结构体]，结构体不更新零值
+func Update[T any](data *T, slt ...string) {
+	if len(slt) > 0 {
+		DB.Model(&data).Select(slt).Updates(&data)
+		return
+	}
+	err := DB.Model(&data).Updates(&data).Error
 	if err != nil {
 		panic(err)
 	}

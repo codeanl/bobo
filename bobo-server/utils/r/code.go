@@ -29,6 +29,7 @@ const (
 	ERROR_EMAIL_NOT_EXIST     = 1014
 	ERROR_USERNAME_EXIST      = 1015
 	ERROR_EMAIL_EXIST         = 1016
+	ERROR_PASSWORD_SAME       = 1017
 
 	// code = 1200.. 鉴权相关错误
 	ERROR_TOKEN_NOT_EXIST  = 1201
@@ -69,6 +70,7 @@ var codeMsg = map[int]string{
 	ERROR_EMAIL_NOT_EXIST:     "验证码不存在",
 	ERROR_USERNAME_EXIST:      "用户名已存在",
 	ERROR_EMAIL_EXIST:         "邮箱已存在",
+	ERROR_PASSWORD_SAME:       "新密码不能与旧密码相同",
 
 	ERROR_TOKEN_NOT_EXIST:  "TOKEN 不存在，请重新登陆",
 	ERROR_TOKEN_RUNTIME:    "TOKEN 已过期，请重新登陆",

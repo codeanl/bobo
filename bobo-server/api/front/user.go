@@ -22,6 +22,27 @@ func (*User) Login(c *gin.Context) {
 
 // Register 注册
 func (*User) Register(c *gin.Context) {
-	code := userService.Register(c, utils.BindValidJson[req.UserRegisterReq](c))
+	code := userService.Register(utils.BindValidJson[req.UserRegisterReq](c))
 	r.SendCode(c, code)
+}
+
+// Profile 个人详情
+func (*User) Profile(c *gin.Context) {
+	profile, code := userService.Profile(utils.GetFromContext[int](c, "user_id"))
+	r.SendData(c, code, profile)
+}
+
+// UpdateProfile 更新个人信息
+func (*User) UpdateProfile(c *gin.Context) {
+	r.SendCode(c, userService.UpdateProfile(utils.BindValidJson[req.UpdateProfileReq](c), utils.GetFromContext[int](c, "user_id")))
+}
+
+// UpdatePassword 更新密码
+func (*User) UpdatePassword(c *gin.Context) {
+	r.SendCode(c, userService.UpdatePassword(utils.BindValidJson[req.UpdatePasswordReq](c), utils.GetFromContext[int](c, "user_id")))
+}
+
+// UpdateEmail 更新邮箱
+func (*User) UpdateEmail(c *gin.Context) {
+	r.SendCode(c, userService.UpdateEmail(utils.BindValidJson[req.UpdateEmailReq](c), utils.GetFromContext[int](c, "user_id")))
 }

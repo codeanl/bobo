@@ -6,6 +6,7 @@ import (
 	"bobo-server/model"
 	"bobo-server/model/dto"
 	"bobo-server/model/req"
+	"bobo-server/model/resp"
 	"bobo-server/utils"
 	"bobo-server/utils/r"
 	"fmt"
@@ -47,7 +48,7 @@ func (*User) SendCode(email string) (code int) {
 }
 
 // Register 注册
-func (*User) Register(c *gin.Context, req req.UserRegisterReq) (code int) {
+func (*User) Register(req req.UserRegisterReq) (code int) {
 	// 检查用户名是否存在
 	if dao.GetOne(model.User{}, "username", req.Username).ID != 0 {
 		return r.ERROR_USERNAME_EXIST
@@ -63,7 +64,7 @@ func (*User) Register(c *gin.Context, req req.UserRegisterReq) (code int) {
 	// 生成用户信息
 	dao.Create(&model.User{
 		Username:      req.Username,
-		Password:      req.Password,
+		Password:      utils.Encryptor.BcryptHash(req.Password),
 		Nickname:      req.Username,
 		Email:         req.Email,
 		Status:        1,
@@ -85,7 +86,7 @@ func (*User) Login(c *gin.Context, req req.UserLoginReq) (token string, code int
 		return token, r.ERROR_USER_DISABLE
 	}
 	// 检查密码是否正确
-	if req.Password != user.Password {
+	if !utils.Encryptor.BcryptCheck(req.Password, user.Password) {
 		return token, r.ERROR_PASSWORD_WRONG
 	}
 	// 获取 IP 相关信息
@@ -107,7 +108,8 @@ func (*User) Login(c *gin.Context, req req.UserLoginReq) (token string, code int
 	user.IpAddress = ipAddress
 	user.IpSource = ipSource
 	user.LastLoginTime = time.Now()
-	dao.UpdateOne(user, "id = ?", user.ID)
+	dao.Update(&user)
+	//dao.UpdateOne(user, "id = ?", user.ID)
 	// 存入redis
 	utils.Redis.Set(KEY_USER+loginInfo, utils.Json.Marshal(dto.UserLoginDTO{
 		ID:            int(user.ID),
@@ -123,4 +125,88 @@ func (*User) Login(c *gin.Context, req req.UserLoginReq) (token string, code int
 		Token:         token,
 	}), time.Duration(config.Cfg.Session.MaxAge)*time.Second)
 	return token, r.OK
+}
+
+// Profile 个人详情
+func (*User) Profile(userID int) (user resp.UserInfoResp, code int) {
+	// 检查用户是否存在
+	userinfo := dao.GetOne(model.User{}, "id", userID)
+	if userinfo.ID == 0 {
+		return user, r.ERROR_USER_NOT_EXIST
+	}
+	user = resp.UserInfoResp{
+		ID:            userinfo.ID,
+		CreatedAt:     userinfo.CreatedAt,
+		Username:      userinfo.Username,
+		Nickname:      userinfo.Nickname,
+		Email:         userinfo.Email,
+		Avatar:        userinfo.Avatar,
+		Status:        userinfo.Status,
+		IpAddress:     userinfo.IpAddress,
+		IpSource:      userinfo.IpSource,
+		LastLoginTime: userinfo.LastLoginTime,
+		Role:          userinfo.Role,
+	}
+	return user, r.OK
+}
+
+// UpdateProfile 更新个人信息
+func (*User) UpdateProfile(req req.UpdateProfileReq, userID int) (code int) {
+	// 检查用户是否存在
+	userinfo := dao.GetOne(model.User{}, "id", userID)
+	if userinfo.ID == 0 {
+		return r.ERROR_USER_NOT_EXIST
+	}
+	// 更新用户信息
+	if req.Nickname != "" {
+		userinfo.Nickname = req.Nickname
+	}
+	if req.Avatar != "" {
+		userinfo.Avatar = req.Avatar
+	}
+	dao.Update(&userinfo)
+	return r.OK
+}
+
+// UpdatePassword 更新密码
+func (*User) UpdatePassword(req req.UpdatePasswordReq, userID int) (code int) {
+	// 检查用户是否存在
+	userinfo := dao.GetOne(model.User{}, "id", userID)
+	if userinfo.ID == 0 {
+		return r.ERROR_USER_NOT_EXIST
+	}
+	// 检查旧密码是否正确
+	if !utils.Encryptor.BcryptCheck(req.OldPassword, userinfo.Password) {
+		return r.ERROR_PASSWORD_WRONG
+	}
+	if req.SecondNewPassword != req.NewPassword {
+		return r.ERROR_SECOND_PASSWORD_NOT
+	}
+	if req.OldPassword == req.NewPassword {
+		return r.ERROR_PASSWORD_SAME
+	}
+	userinfo.Password = utils.Encryptor.BcryptHash(req.NewPassword)
+	dao.Update(&userinfo)
+	return r.OK
+}
+
+// UpdateEmail 更新邮箱
+func (*User) UpdateEmail(req req.UpdateEmailReq, userID int) (code int) {
+	// 检查用户是否存在
+	userSer1 := dao.GetOne(model.User{}, "id", userID)
+	if userSer1.ID == 0 {
+		return r.ERROR_USER_NOT_EXIST
+	}
+	// 检查邮箱是否已存在
+	userSer2 := dao.GetOne(model.User{}, "email", req.Email)
+	if userSer2.ID != 0 {
+		return r.ERROR_EMAIL_EXIST
+	}
+	// 检查验证码是否正确
+	if utils.Redis.GetVal(KEY_CODE+req.Email) != req.Code {
+		return r.ERROR_EMAIL_NOT_EXIST
+	}
+	userSer2.Email = req.Email
+	dao.Update(&userSer2)
+	return r.OK
 }

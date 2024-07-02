@@ -27,7 +27,18 @@ func FrontRouter() http.Handler {
 		}
 	}
 	// 需要鉴权的接口
-	//auth := r.Group("/api")
+	auth := base.Group("")
+	auth.Use(middleware.JWTUserAuth()) // JWT 鉴权中间件
+	{
+		// 用户模块
+		user := auth.Group("/user")
+		{
+			user.GET("/profile", userApi.Profile)        // 个人详情
+			user.PUT("/profile", userApi.UpdateProfile)  // 更新个人信息
+			user.PUT("/up_pass", userApi.UpdatePassword) //更换密码
+			user.PUT("/up_email", userApi.UpdateEmail)   //更换邮箱
+		}
+	}
 
 	r.Run(config.Cfg.Server.FrontPort)
 	return r
