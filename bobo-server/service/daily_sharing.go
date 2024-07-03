@@ -6,6 +6,8 @@ import (
 	"bobo-server/model/req"
 	"bobo-server/model/resp"
 	"bobo-server/utils"
+	"bobo-server/utils/r"
+	"github.com/gin-gonic/gin"
 	"strconv"
 )
 
@@ -53,4 +55,51 @@ func (*DailySharing) DailySharingInfo(req req.GetDailySharingInfoReq) resp.GetDa
 	// * 目前请求一次就会增加访问量, 即刷新可以刷访问量
 	utils.Redis.ZincrBy(KEY_ARTICLE_VIEW_COUNT, strconv.Itoa(req.ID), 1)
 	return articleVo
+}
+
+// SaveOrUpdate 创建/编辑文章
+func (*DailySharing) SaveOrUpdate(c *gin.Context, req req.SaveOrUpdateDailySharingReq, userId int) int {
+	if req.ID > 0 {
+		ds := dao.GetOne(model.DailySharing{}, "id=?", req.ID)
+		ds.Content = req.Content
+		dao.Update(&ds)
+		//
+		dao.Delete(model.DailySharingAttachment{}, "a_id=?", req.ID)
+		//
+		for _, i := range req.Attachment {
+			dao.Create(&model.DailySharingAttachment{
+				AID:  int(ds.ID),
+				Type: i.Type,
+				Url:  i.Url,
+			})
+		}
+	} else {
+		ds := &model.DailySharing{
+			Content: req.Content,
+			Uid:     userId,
+			IPLoc:   utils.IP.GetIpSourceSimpleIdle(utils.IP.GetIpAddress(c)),
+			ISTop:   "0",
+		}
+		dao.Create(&ds)
+		for _, i := range req.Attachment {
+			dao.Create(&model.DailySharingAttachment{
+				AID:  int(ds.ID),
+				Type: i.Type,
+				Url:  i.Url,
+			})
+		}
+	}
+	return r.OK
+}
+
+// Delete 删除文章
+func (*DailySharing) Delete(req req.DeleteDailySharingReq) int {
+	ds := dao.GetOne(model.DailySharing{}, "id=?", req.ID)
+	if ds.ID == 0 {
+		return r.ERROR_DAILYSHARING_NOT_EXIST
+	} else {
+		dao.Delete(model.DailySharing{}, "id=?", req.ID)
+		dao.Delete(model.DailySharingAttachment{}, "a_id=?", req.ID)
+	}
+	return r.OK
 }

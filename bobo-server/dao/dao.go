@@ -47,3 +47,11 @@ func List[T any](data T, slt, order, query string, args ...any) T {
 	}
 	return data
 }
+
+// [批量]删除数据, 通过条件控制可以删除单条数据
+func Delete[T any](data T, query string, args ...any) {
+	err := DB.Where(query, args...).Delete(&data).Error
+	if err != nil {
+		panic(err)
+	}
+}

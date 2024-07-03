@@ -31,6 +31,9 @@ const (
 	ERROR_EMAIL_EXIST         = 1016
 	ERROR_PASSWORD_SAME       = 1017
 
+	// 贴子模块
+	ERROR_DAILYSHARING_NOT_EXIST = 2001
+
 	// code = 1200.. 鉴权相关错误
 	ERROR_TOKEN_NOT_EXIST  = 1201
 	ERROR_TOKEN_RUNTIME    = 1202
@@ -71,6 +74,9 @@ var codeMsg = map[int]string{
 	ERROR_USERNAME_EXIST:      "用户名已存在",
 	ERROR_EMAIL_EXIST:         "邮箱已存在",
 	ERROR_PASSWORD_SAME:       "新密码不能与旧密码相同",
+
+	// 贴子模块
+	ERROR_DAILYSHARING_NOT_EXIST: "该贴子不存在",
 
 	ERROR_TOKEN_NOT_EXIST:  "TOKEN 不存在，请重新登陆",
 	ERROR_TOKEN_RUNTIME:    "TOKEN 已过期，请重新登陆",

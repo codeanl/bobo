@@ -29,9 +29,7 @@ func FrontRouter() http.Handler {
 		{
 			DailySharing.GET("/list", dailySharingApi.DailySharingList) // 贴子列表
 			DailySharing.GET("/info", dailySharingApi.DailySharingInfo) // 贴子详情
-			//DailySharing.POST("/create", dailySharingApi.Create)   // 创建贴子
-			//DailySharing.PUT("/update", dailySharingApi.Update)    // 更新贴子
-			//DailySharing.DELETE("/delete", dailySharingApi.Delete) // 删除贴子
+
 		}
 	}
 	// 需要鉴权的接口
@@ -45,6 +43,12 @@ func FrontRouter() http.Handler {
 			user.PUT("/profile", userApi.UpdateProfile)  // 更新个人信息
 			user.PUT("/up_pass", userApi.UpdatePassword) //更换密码
 			user.PUT("/up_email", userApi.UpdateEmail)   //更换邮箱
+		}
+		// 贴子
+		DailySharing := auth.Group("/daily_sharing")
+		{
+			DailySharing.POST("/save_or_update", dailySharingApi.SaveOrUpdate) // 创建/编辑贴子
+			DailySharing.DELETE("/delete", dailySharingApi.Delete)             // 删除贴子
 		}
 	}
 
