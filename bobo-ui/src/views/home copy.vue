@@ -1,37 +1,32 @@
 <template>
-  <!-- 列表内容 -->
-  <n-list hoverable clickable>
-    <n-list-item>
-      <div style="display: grid;place-items: center;">
-        <span>登录后，精彩更多</span>
-        <Login></Login>
-      </div>
-    </n-list-item>
-    <n-list-item v-for="i in test" :key="i">
-      <!-- 列表项内容 -->
-      <n-thing title="相见恨晚" content-style="margin-top: 10px;">
-        <template #description>
-          <n-space size="small" style="margin-top: 4px">
-            <n-tag :bordered="false" type="info" size="small">
-              暑夜
-            </n-tag>
-            <n-tag :bordered="false" type="info" size="small">
-              晚春
-            </n-tag>
-          </n-space>
-        </template>
-        奋勇呀然后休息呀<br>
-        完成你伟大的人生
-      </n-thing>
-    </n-list-item>
-  </n-list>
+  <div ref="scrollContainer" style="height: 800px; overflow-y: auto;width: 800px;">
+    <!-- 列表内容 -->
+    <n-list hoverable clickable>
+      <n-list-item v-for="i in test" :key="i">
+        <!-- 列表项内容 -->
+        <n-thing title="相见恨晚" content-style="margin-top: 10px;">
+          <template #description>
+            <n-space size="small" style="margin-top: 4px">
+              <n-tag :bordered="false" type="info" size="small">
+                暑夜
+              </n-tag>
+              <n-tag :bordered="false" type="info" size="small">
+                晚春
+              </n-tag>
+            </n-space>
+          </template>
+          奋勇呀然后休息呀<br>
+          完成你伟大的人生
+        </n-thing>
+      </n-list-item>
+    </n-list>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watchEffect } from 'vue';
-const test = ref(20)
+const test = ref(10)
 let isD = ref<Boolean>(false)
-import Login from '@/components/login.vue'
 const scrollContainer = ref<HTMLElement | null>(null);
 function checkScrollPosition() {
   const container = scrollContainer.value;

@@ -1,34 +1,43 @@
 <template>
-  <n-config-provider :theme="theme">
-    <div style="margin: 0 auto;display: flex;">
-      <!-- 左侧菜单 -->
-      <Menu></Menu>
-      <!-- 内容-->
-      <div style="display: grid; grid-template-columns: auto 1fr;height: 100vh;">
-        <!--  -->
-        <div style="grid-column: 1 / -1;display: flex;justify-content: space-between;height: 60px;width: 610px;
-       align-items: center;padding: 0 10px;" :class="{ 'dark-border': active, 'no-dark-border': !active }">
-          <span style="font-size: 15px;font-weight: bold;">bobo社区</span>
-          <n-switch v-model:value="active" size="small" @change="changetheme">
-            <template #checked-icon>
-              <n-icon :component="Sunny" />
-            </template>
-            <template #unchecked-icon>
-              <n-icon :component="Moon" />
-            </template>
-          </n-switch>
-        </div>
-        <!--  -->
-        <div style="grid-column: 2;overflow-y: auto;width: 630px; border-top: 0;border-bottom: 0;"
-          :class="{ 'dark-border ': active, 'no-dark-border ': !active }">
-          <router-view></router-view>
-        </div>
-      </div>
-      <!-- 右侧 -->
-      <Advertise></Advertise>
-    </div>
-    <n-global-style />
-  </n-config-provider>
+  <n-modal-provider>
+    <n-dialog-provider>
+      <n-message-provider>
+        <n-config-provider :theme="theme">
+          <!--  -->
+          <div style="width: 230px;height: 100vh; position: fixed;left:calc(50% - 550px); " class="media">
+            <Menu></Menu>
+          </div>
+          <!--  -->
+          <div style="width: 230px;height: 100vh; position: fixed;right: calc(50% - 550px ); " class="media">
+            <Advertise></Advertise>
+          </div>
+          <!--  -->
+          <div style="width: 600px;">
+            <!-- header -->
+            <div style="position: sticky ;z-index: 99;left: 0; 
+        top: 0;display: flex;justify-content: space-between;height: 60px;
+        align-items: center;padding: 0 10px;"
+              :class="{ 'dark-border': active, 'no-dark-border': !active, 'bg-black': active, 'bg-white': !active }">
+              <span style="font-size: 15px;font-weight: bold;">BOBO社区</span>
+              <n-switch v-model:value="active" size="small" @change="changetheme">
+                <template #checked-icon>
+                  <n-icon :component="Sunny" />
+                </template>
+                <template #unchecked-icon>
+                  <n-icon :component="Moon" />
+                </template>
+              </n-switch>
+            </div>
+            <!-- routerview -->
+            <div>
+              <router-view></router-view>
+            </div>
+          </div>
+          <n-global-style />
+        </n-config-provider>
+      </n-message-provider>
+    </n-dialog-provider>
+  </n-modal-provider>
 </template>
 
 <script setup lang="ts">
@@ -38,7 +47,6 @@ import { Moon, Sunny } from '@vicons/ionicons5'
 import { ref } from 'vue';
 import { darkTheme } from 'naive-ui'
 import type { GlobalTheme } from 'naive-ui'
-import { defineComponent } from 'vue'
 
 const active = ref(false)
 const theme = ref<GlobalTheme | null>(null)
@@ -54,5 +62,25 @@ const changetheme = () => {
 
 .dark-border {
   border: 1px solid rgb(43, 43, 46);
+}
+
+.bg-black {
+  background-color: rgb(24, 24, 28);
+
+}
+
+.bg-white {
+  background-color: rgb(255, 255, 255);
+}
+
+.media {
+  display: block;
+}
+
+/* 当屏幕宽度小于400px时，div元素消失 */
+@media (max-width: 820px) {
+  .media {
+    display: none;
+  }
 }
 </style>
