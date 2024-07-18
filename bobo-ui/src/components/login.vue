@@ -23,7 +23,7 @@
                             <n-input />
                         </n-form-item-row>
                     </n-form>
-                    <n-button type="primary" block secondary strong>
+                    <n-button type="primary" block secondary strong @click="login">
                         登录
                     </n-button>
                 </n-tab-pane>
@@ -47,7 +47,7 @@
                                 v-model:value="registerForm.password" />
                         </n-form-item-row>
                     </n-form>
-                    <n-button type="primary" block secondary strong>
+                    <n-button type="primary" block secondary strong @click=register>
                         注册
                     </n-button>
                 </n-tab-pane>
@@ -57,34 +57,43 @@
 </template>
 
 <script setup lang="ts">
-import { NIcon } from "naive-ui";
 import { ref, reactive } from "vue";
 import { Component, h } from "vue";
+import { NIcon } from "naive-ui";
 function renderIcon(icon: Component) {
     return () => h(NIcon, null, { default: () => h(icon) });
 }
-const tabName = ref("login")
-const showModal = ref(false);
-import { useMessage, useDialog } from "naive-ui";
-import { SendCode } from '@/api/user'
+import { useMessage } from "naive-ui";
 const message = useMessage();
-const dialog = useDialog();
+import { SendCode, Register } from '@/api/user'
 
-
+// 注册表单
 let registerForm = reactive({
     username: "",
     password: "",
     email: "",
     code: "",
 });
+
+const tabName = ref("login")
+const showModal = ref(false);
+//点击登录按钮
 const toLogin = () => {
     showModal.value = true;
     tabName.value = "login";
 };
+//点击注册按钮
 const toRegister = () => {
+    registerForm = reactive({
+        username: "",
+        password: "",
+        email: "",
+        code: "",
+    });
     showModal.value = true;
     tabName.value = "register";
 };
+
 //发送验证码
 const sendCode = async () => {
     let res: any = await SendCode({
@@ -95,6 +104,19 @@ const sendCode = async () => {
     } else {
         message.error(res.message)
     }
+}
+//注册
+const register = async () => {
+    let res = await Register(registerForm)
+    if (res.code == 200) {
+        showModal.value = false;
+        message.success('注册成功')
+    } else {
+        message.error(res.message)
+    }
+}
+const login = () => {
+    tabName.value = "register";
 }
 </script>
 
