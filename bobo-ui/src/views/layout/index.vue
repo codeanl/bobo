@@ -1,8 +1,8 @@
 <template>
   <n-modal-provider>
     <n-dialog-provider>
-      <n-message-provider>
-        <n-config-provider :theme="theme">
+      <n-config-provider :theme="theme">
+        <n-message-provider>
           <!--  -->
           <div style="width: 230px;height: 100vh; position: fixed;left:calc(50% - 550px); " class="media">
             <Menu></Menu>
@@ -34,8 +34,8 @@
             </div>
           </div>
           <n-global-style />
-        </n-config-provider>
-      </n-message-provider>
+        </n-message-provider>
+      </n-config-provider>
     </n-dialog-provider>
   </n-modal-provider>
 </template>

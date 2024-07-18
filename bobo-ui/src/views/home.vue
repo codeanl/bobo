@@ -53,7 +53,6 @@ function checkScrollPosition() {
       }
     }
   }
-
 }
 
 watchEffect(() => {
