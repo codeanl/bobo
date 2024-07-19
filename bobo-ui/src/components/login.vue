@@ -8,6 +8,7 @@
             注册
         </n-button>
     </div>
+
     <!--  -->
     <n-modal v-model:show="showModal">
         <n-card style="width: 350px" :bordered="false" size="huge" aria-modal="true">
@@ -16,12 +17,14 @@
                 <!--  -->
                 <n-tab-pane name="login" tab="登录">
                     <n-form>
-                        <n-form-item-row label="用户名">
-                            <n-input />
-                        </n-form-item-row>
-                        <n-form-item-row label="密码">
-                            <n-input />
-                        </n-form-item-row>
+                        <n-form :model:value="loginForm">
+                            <n-form-item-row label="用户名">
+                                <n-input v-model:value="loginForm.username" />
+                            </n-form-item-row>
+                            <n-form-item-row label="密码">
+                                <n-input v-model:value="loginForm.password" />
+                            </n-form-item-row>
+                        </n-form>
                     </n-form>
                     <n-button type="primary" block secondary strong @click="login">
                         登录
@@ -65,7 +68,8 @@ function renderIcon(icon: Component) {
 }
 import { useMessage } from "naive-ui";
 const message = useMessage();
-import { SendCode, Register } from '@/api/user'
+import { SendCode, Register, Login, Profile } from '@/api/user'
+import { log } from "console";
 
 // 注册表单
 let registerForm = reactive({
@@ -73,6 +77,11 @@ let registerForm = reactive({
     password: "",
     email: "",
     code: "",
+});
+//表单数据
+let loginForm = reactive({
+    username: "codeanl",
+    password: "123456",
 });
 
 const tabName = ref("login")
@@ -115,9 +124,42 @@ const register = async () => {
         message.error(res.message)
     }
 }
-const login = () => {
-    tabName.value = "register";
+
+import useUserStore from "@/store/user";
+let userStore = useUserStore();
+
+const login = async () => {
+    tabName.value = "login";
+    // userStore.token = ''
+    // console.log(userStore.token);
+    let res = await Login(loginForm)
+    if (res.code == 200) {
+        userStore.token = res.data
+        let profileReq = await Profile()
+        if (profileReq.code == 200) {
+            userStore.created_at = profileReq.data.created_at
+            userStore.email = profileReq.data.email
+            userStore.id = profileReq.data.id
+            userStore.ip_address = profileReq.data.ip_address
+            userStore.ip_source = profileReq.data.ip_source
+            userStore.last_login_time = profileReq.data.last_login_time
+            userStore.nickname = profileReq.data.nickname
+            userStore.role = profileReq.data.role
+            userStore.status = profileReq.data.status
+            userStore.username = profileReq.data.username
+            userStore.avatar = profileReq.data.avatar
+            showModal.value = false;
+            message.success('登陆成功')
+            console.log(userStore.token);
+        } else {
+            message.error(profileReq.message)
+        }
+    } else {
+        message.error(res.message)
+    }
 }
+
+
 </script>
 
 <style scoped>

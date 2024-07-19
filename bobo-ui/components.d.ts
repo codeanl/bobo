@@ -10,6 +10,7 @@ declare module 'vue' {
     copy: typeof import('./src/components/login copy.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Login: typeof import('./src/components/login.vue')['default']
+    Logout: typeof import('./src/components/logout.vue')['default']
     NAvatar: typeof import('naive-ui')['NAvatar']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']

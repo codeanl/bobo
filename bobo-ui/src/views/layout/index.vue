@@ -30,6 +30,14 @@
             </div>
             <!-- routerview -->
             <div>
+              <!--  -->
+              <div style="display: grid;place-items: center;" v-if="userStore.token == ''">
+                <!-- <div style="display: grid;place-items: center;"> -->
+
+                <span>登录后，精彩更多</span>
+                <Login></Login>
+              </div>
+              <!--  -->
               <router-view></router-view>
             </div>
           </div>
@@ -43,16 +51,20 @@
 <script setup lang="ts">
 import Menu from '@/views/layout/menu.vue'
 import Advertise from '@/views/layout/advertise.vue'
+import Login from '@/components/login.vue'
 import { Moon, Sunny } from '@vicons/ionicons5'
 import { ref } from 'vue';
 import { darkTheme } from 'naive-ui'
 import type { GlobalTheme } from 'naive-ui'
+import useUserStore from "@/store/user";
+let userStore = useUserStore();
 
 const active = ref(false)
 const theme = ref<GlobalTheme | null>(null)
 const changetheme = () => {
   theme.value = active.value == true ? darkTheme : null;
 };
+
 
 </script>
 <style scoped>

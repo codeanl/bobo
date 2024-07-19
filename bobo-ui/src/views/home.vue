@@ -1,12 +1,6 @@
 <template>
   <!-- 列表内容 -->
   <n-list hoverable clickable>
-    <n-list-item>
-      <div style="display: grid;place-items: center;">
-        <span>登录后，精彩更多</span>
-        <Login></Login>
-      </div>
-    </n-list-item>
     <n-list-item v-for="i in test" :key="i">
       <!-- 列表项内容 -->
       <n-thing title="相见恨晚" content-style="margin-top: 10px;">
