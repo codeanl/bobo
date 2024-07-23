@@ -12,6 +12,10 @@ let router = createRouter({
                     path: '/home',
                     component: () => import('@/views/home.vue'),
                 },
+                {
+                    path: '/setting',
+                    component: () => import('@/views/setting.vue'),
+                },
             ]
         },
         

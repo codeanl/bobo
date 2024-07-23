@@ -1,69 +1,58 @@
 <template>
-  <!-- 列表内容 -->
-  <n-list hoverable clickable>
-    <n-list-item v-for="i in test" :key="i">
-      <!-- 列表项内容 -->
-      <n-thing title="相见恨晚" content-style="margin-top: 10px;">
-        <template #description>
-          <n-space size="small" style="margin-top: 4px">
-            <n-tag :bordered="false" type="info" size="small">
-              暑夜
-            </n-tag>
-            <n-tag :bordered="false" type="info" size="small">
-              晚春
-            </n-tag>
-          </n-space>
-        </template>
-        奋勇呀然后休息呀<br>
-        完成你伟大的人生
-      </n-thing>
-    </n-list-item>
-  </n-list>
+  <div ref="scrollContainer" style="overflow-y: auto; "> <!-- 添加 ref 到容器 -->
+    <n-list hoverable clickable>
+      <n-list-item v-for="i in test" :key="i">
+        <n-thing title="相见恨晚" content-style="margin-top: 10px;">
+          <template #description>
+            <n-space size="small" style="margin-top: 4px">
+              <n-tag :bordered="false" type="info" size="small">
+                暑夜
+              </n-tag>
+              <n-tag :bordered="false" type="info" size="small">
+                晚春
+              </n-tag>
+            </n-space>
+          </template>
+          奋勇呀然后休息呀<br>
+          完成你伟大的人生
+        </n-thing>
+      </n-list-item>
+      <!-- 添加一个隐藏的锚点元素 -->
+      <div ref="sentinel" style="height: 1px;"></div>
+    </n-list>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watchEffect } from 'vue';
-const test = ref(20)
-let isD = ref<Boolean>(false)
-import Login from '@/components/login.vue'
+import { ref, onMounted, onUnmounted } from 'vue';
+import { NList, NListItem, NThing, NSpace, NTag } from 'naive-ui';
+
+const test = ref(20);
 const scrollContainer = ref<HTMLElement | null>(null);
-function checkScrollPosition() {
-  const container = scrollContainer.value;
-  if (!container) return;
+const sentinel = ref<HTMLElement | null>(null);
 
-  const scrollHeight = container.scrollHeight;
-  const scrollTop = container.scrollTop;
-  const clientHeight = container.clientHeight;
-
-  if (!isD.value) {
-    // 检查是否滚动到底部
-    if (scrollTop + clientHeight >= scrollHeight - 1) {
-      console.log("gogo");
-      test.value = test.value + 10
-      if (test.value >= 100) {
-        isD.value = true
-        console.log("Stop");
-        console.log(test.value);
-      }
-    }
-  }
+function handleScrollBottom() {
+  console.log('666');
 }
 
-watchEffect(() => {
-  const container = scrollContainer.value;
-  if (container) {
-    // 添加滚动事件监听器
-    container.addEventListener('scroll', checkScrollPosition);
-  }
-});
-
 onMounted(() => {
-  // 组件卸载时移除事件监听器
-  return () => {
-    const container = scrollContainer.value;
-    if (container) {
-      container.removeEventListener('scroll', checkScrollPosition);
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      handleScrollBottom();
     }
-  };
+  }, {
+    root: scrollContainer.value,
+    threshold: 1.0
+  });
+
+  if (sentinel.value) {
+    observer.observe(sentinel.value);
+  }
+
+  onUnmounted(() => {
+    if (sentinel.value) {
+      observer.unobserve(sentinel.value);
+    }
+  });
 });
 </script>

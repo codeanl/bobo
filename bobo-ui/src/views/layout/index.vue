@@ -33,12 +33,14 @@
               <!--  -->
               <div style="display: grid;place-items: center;" v-if="userStore.token == ''">
                 <!-- <div style="display: grid;place-items: center;"> -->
-
                 <span>登录后，精彩更多</span>
                 <Login></Login>
               </div>
               <!--  -->
-              <router-view></router-view>
+              <div
+                style="border-bottom: 1px solid rgb(239, 239, 246);border-left: 1px solid rgb(239, 239, 246);border-right: 1px solid rgb(239, 239, 246);">
+                <router-view></router-view>
+              </div>
             </div>
           </div>
           <n-global-style />
