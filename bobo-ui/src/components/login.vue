@@ -36,6 +36,9 @@
                         <n-form-item-row label="用户名">
                             <n-input v-model:value="registerForm.username" placeholder="请输入用户名" />
                         </n-form-item-row>
+                        <n-form-item-row label="昵称">
+                            <n-input v-model:value="registerForm.nickname" placeholder="请输入昵称" />
+                        </n-form-item-row>
                         <n-form-item-row label="邮箱">
                             <n-input v-model:value="registerForm.email" placeholder="请输入邮箱" />
                             <n-button strong secondary type="success" @click="sendCode">
@@ -77,6 +80,7 @@ let registerForm = reactive({
     password: "",
     email: "",
     code: "",
+    nickname: ""
 });
 //表单数据
 let loginForm = reactive({
@@ -95,6 +99,7 @@ const toLogin = () => {
 const toRegister = () => {
     registerForm = reactive({
         username: "",
+        nickname: "",
         password: "",
         email: "",
         code: "",
@@ -130,32 +135,17 @@ let userStore = useUserStore();
 
 const login = async () => {
     tabName.value = "login";
-    // userStore.token = ''
-    // console.log(userStore.token);
-    let res = await Login(loginForm)
-    if (res.code == 200) {
-        userStore.token = res.data
-        let profileReq = await Profile()
-        if (profileReq.code == 200) {
-            userStore.created_at = profileReq.data.created_at
-            userStore.email = profileReq.data.email
-            userStore.id = profileReq.data.id
-            userStore.ip_address = profileReq.data.ip_address
-            userStore.ip_source = profileReq.data.ip_source
-            userStore.last_login_time = profileReq.data.last_login_time
-            userStore.nickname = profileReq.data.nickname
-            userStore.role = profileReq.data.role
-            userStore.status = profileReq.data.status
-            userStore.username = profileReq.data.username
-            userStore.avatar = profileReq.data.avatar
-            showModal.value = false;
+    let res = await userStore.userLogin(loginForm)
+    if (res == 'OK') {
+        let res1 = await userStore.userProfile()
+        if (res1 == 'OK') {
             message.success('登陆成功')
-            console.log(userStore.token);
         } else {
-            message.error(profileReq.message)
+            userStore.token = ''
+            message.error(res1)
         }
     } else {
-        message.error(res.message)
+        message.error(res)
     }
 }
 

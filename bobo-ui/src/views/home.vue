@@ -1,58 +1,35 @@
 <template>
-  <div ref="scrollContainer" style="overflow-y: auto; "> <!-- 添加 ref 到容器 -->
-    <n-list hoverable clickable>
-      <n-list-item v-for="i in test" :key="i">
-        <n-thing title="相见恨晚" content-style="margin-top: 10px;">
-          <template #description>
-            <n-space size="small" style="margin-top: 4px">
-              <n-tag :bordered="false" type="info" size="small">
-                暑夜
-              </n-tag>
-              <n-tag :bordered="false" type="info" size="small">
-                晚春
-              </n-tag>
-            </n-space>
-          </template>
-          奋勇呀然后休息呀<br>
-          完成你伟大的人生
-        </n-thing>
-      </n-list-item>
-      <!-- 添加一个隐藏的锚点元素 -->
-      <div ref="sentinel" style="height: 1px;"></div>
-    </n-list>
-  </div>
+  <main>
+    <div v-for="i in dd">
+      <video-player :src="videoSrc" :options="playerOptions" :volume="0.6" />
+    </div>
+  </main>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { NList, NListItem, NThing, NSpace, NTag } from 'naive-ui';
-
-const test = ref(20);
-const scrollContainer = ref<HTMLElement | null>(null);
-const sentinel = ref<HTMLElement | null>(null);
-
-function handleScrollBottom() {
-  console.log('666');
-}
-
-onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      handleScrollBottom();
-    }
-  }, {
-    root: scrollContainer.value,
-    threshold: 1.0
-  });
-
-  if (sentinel.value) {
-    observer.observe(sentinel.value);
+<script setup>
+// 视频链接地址
+const videoSrc = ref('http://localhost:4321/uploads/视频_1720194839028(Video_1720194_爱给网_aigei_com.mp4');
+const dd = ref(["http://localhost:4321/uploads/动漫混剪1_爱给网_aigei_com.mp4", 'http://localhost:4321/uploads/视频_1720194839028(Video_1720194_爱给网_aigei_com.mp4'])
+// 视频播放器配置
+let playerOptions = ref({
+  // height: 200,
+  // width: document.documentElement.clientWidth, //播放器宽度
+  playbackRates: [0.7, 1.0, 1.5, 2.0], // 播放速度
+  autoplay: 'any', // 如果true,浏览器准备好时开始回放。
+  muted: true, // 默认情况下将会消除任何音频。
+  loop: true, // 导致视频一结束就重新开始。
+  preload: 'auto', // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
+  language: 'zh-CN',
+  aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
+  fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
+  notSupportedMessage: '此视频暂无法播放，请稍后再试', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
+  controls: true,
+  controlBar: {
+    timeDivider: true,
+    durationDisplay: true,
+    remainingTimeDisplay: false,
+    fullscreenToggle: true // 全屏按钮
   }
+})
 
-  onUnmounted(() => {
-    if (sentinel.value) {
-      observer.unobserve(sentinel.value);
-    }
-  });
-});
 </script>

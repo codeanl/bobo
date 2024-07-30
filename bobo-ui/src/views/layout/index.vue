@@ -7,16 +7,17 @@
           <div style="width: 230px;height: 100vh; position: fixed;left:calc(50% - 550px); " class="media">
             <Menu></Menu>
           </div>
+
           <!--  -->
           <div style="width: 230px;height: 100vh; position: fixed;right: calc(50% - 550px ); " class="media">
             <Advertise></Advertise>
           </div>
+
           <!--  -->
-          <div style="width: 600px;">
+          <div style="width: 600px;" class="home">
             <!-- header -->
-            <div style="position: sticky ;z-index: 99;left: 0; 
-        top: 0;display: flex;justify-content: space-between;height: 60px;
-        align-items: center;padding: 0 10px;"
+            <div style="position: sticky ;z-index: 99;left: 0; top: 0;display: flex;justify-content: space-between;height: 60px;
+              align-items: center;padding: 0 10px;"
               :class="{ 'dark-border': active, 'no-dark-border': !active, 'bg-black': active, 'bg-white': !active }">
               <span style="font-size: 15px;font-weight: bold;">BOBO社区</span>
               <n-switch v-model:value="active" size="small" @change="changetheme">
@@ -28,19 +29,20 @@
                 </template>
               </n-switch>
             </div>
-            <!-- routerview -->
+
             <div>
+              <!-- 登陆 -->
+              <n-list bordered>
+                <div style=" display: grid;place-items: center;padding: 20px 0;" v-if="userStore.token == ''">
+                  <span>登录后，精彩更多</span>
+                  <Login></Login>
+                </div>
+              </n-list>
               <!--  -->
-              <div style="display: grid;place-items: center;" v-if="userStore.token == ''">
-                <!-- <div style="display: grid;place-items: center;"> -->
-                <span>登录后，精彩更多</span>
-                <Login></Login>
-              </div>
-              <!--  -->
-              <div
-                style="border-bottom: 1px solid rgb(239, 239, 246);border-left: 1px solid rgb(239, 239, 246);border-right: 1px solid rgb(239, 239, 246);">
+              <div :class="{ 'dark-border-3': active, 'no-dark-border-3': !active }">
                 <router-view></router-view>
               </div>
+
             </div>
           </div>
           <n-global-style />
@@ -78,9 +80,20 @@ const changetheme = () => {
   border: 1px solid rgb(43, 43, 46);
 }
 
+.no-dark-border-3 {
+  border-left: 1px solid #efeff6;
+  border-right: 1px solid #efeff6;
+  border-bottom: 1px solid #efeff6;
+}
+
+.dark-border-3 {
+  border-left: 1px solid rgb(43, 43, 46);
+  border-right: 1px solid rgb(43, 43, 46);
+  border-bottom: 1px solid rgb(43, 43, 46);
+}
+
 .bg-black {
   background-color: rgb(24, 24, 28);
-
 }
 
 .bg-white {
@@ -95,6 +108,10 @@ const changetheme = () => {
 @media (max-width: 820px) {
   .media {
     display: none;
+  }
+
+  .home {
+    max-width: 100vw;
   }
 }
 </style>

@@ -12,7 +12,6 @@ request.interceptors.request.use((config) => {
     //获取token携带给服务器
     let userStore = useUserStore()
     if (userStore.token!='') {
-        // config.headers.token = userStore.token
         config.headers.Authorization = `Bearer ${userStore.token}`
     }
     //返回配置对象

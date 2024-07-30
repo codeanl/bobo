@@ -29,19 +29,12 @@ function renderIcon(icon: Component) {
 import useUserStore from "@/store/user";
 let userStore = useUserStore();
 
+import { useRouter } from "vue-router";
+let router = useRouter();
+
 const logout = () => {
-    userStore.token = ''
-    userStore.created_at = null
-    userStore.email = userStore.created_at = null
-    userStore.id = userStore.created_at = null
-    userStore.ip_address = userStore.created_at = null
-    userStore.ip_source = userStore.created_at = null
-    userStore.last_login_time = userStore.created_at = null
-    userStore.nickname = userStore.created_at = null
-    userStore.role = userStore.created_at = null
-    userStore.status = userStore.created_at = null
-    userStore.username = userStore.created_at = null
-    userStore.avatar = userStore.created_at = null
+    userStore.userLogout()
+    router.push("/");
 }
 
 </script>
