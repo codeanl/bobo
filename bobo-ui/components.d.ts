@@ -63,5 +63,6 @@ declare module 'vue' {
     NUploadTrigger: typeof import('naive-ui')['NUploadTrigger']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Video: typeof import('./src/components/video.vue')['default']
   }
 }
