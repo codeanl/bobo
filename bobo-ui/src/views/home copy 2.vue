@@ -1,6 +1,7 @@
 <template>
   <n-infinite-scroll style="max-height: 100vh" :distance="10" @load="handleLoad">
     <n-list hoverable clickable show-divider>
+
       <n-list bordered>
         <Compose @submit-success="composeSuccess"></Compose>
       </n-list>
@@ -30,20 +31,8 @@
           <div class="images">
             <n-image-group>
               <n-space>
-                <n-image-group>
-                  <n-grid :x-gap="4" :y-gap="4" :cols="3">
-                    <template v-for="(img, index) in i?.DailyAttachment?.filter(item1 => item1.type === '1')"
-                      :key="index">
-                      <n-gi>
-                        <n-image @click.stop class="post-img" object-fit="cover" :src="img.url" />
-                      </n-gi>
-                    </template>
-                  </n-grid>
-                </n-image-group>
-                <!-- <n-image 
-                  v-for="item in i?.DailyAttachment?.filter(item1 => item1.type === '1')" :src="item.url"
+                <n-image v-for="item in i?.DailyAttachment?.filter(item1 => item1.type === '1')" :src="item.url"
                   style="max-height: 158px;object-fit: cover;" width="158" @click.stop />
-               -->
               </n-space>
             </n-image-group>
           </div>
@@ -92,12 +81,6 @@
         </div>
       </n-list-item>
     </n-list>
-    <div v-if="loading" class="text" style="display: flex;align-items: baseline;justify-content: center;">
-      加载中...
-    </div>
-    <div v-if="noMore" class="text" style="display: flex;align-items: baseline;justify-content: center;">
-      没有更多了 🤪
-    </div>
   </n-infinite-scroll>
 </template>
 
@@ -163,7 +146,6 @@ const GetData = async () => {
   })
   if (res.code == 200) {
     dailyList.value = res.data
-    total.value = res.count
   }
 }
 
@@ -199,6 +181,9 @@ const handleLoad = async () => {
     return
   }
   loading.value = true
+  const data = ref([])
+  data.value = dailyList.value
+
   // GetData()
   page_num.value++
   console.log("获取第" + page_num.value + "页数据");
@@ -209,11 +194,10 @@ const handleLoad = async () => {
   })
   if (res.code == 200) {
     dailyList.value.push(...res.data)
-    loading.value = false
   } else {
     page_num.value--
-    loading.value = false
   }
+  loading.value = false
 }
 </script>
 
@@ -284,15 +268,6 @@ const handleLoad = async () => {
     .btn p {
       margin-left: 10px;
     }
-  }
-}
-
-.post-img {
-
-
-  img {
-    width: 100%;
-    height: 100%;
   }
 }
 </style>

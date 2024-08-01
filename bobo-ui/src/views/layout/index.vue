@@ -19,7 +19,11 @@
             <div style="position: sticky ;z-index: 99;left: 0; top: 0;display: flex;justify-content: space-between;height: 60px;
               align-items: center;padding: 0 10px;"
               :class="{ 'dark-border': active, 'no-dark-border': !active, 'bg-black': active, 'bg-white': !active }">
-              <span style="font-size: 15px;font-weight: bold;">BOBO社区</span>
+              <div style="display: flex;align-items: center;">
+                <n-icon :component="MenuSharp" size="20" style="margin-right: 10px;display: none;" class="sizeBtn"
+                  @click="isMedia = !isMedia" />
+                <span style="font-size: 15px;font-weight: bold;">BOBO社区</span>
+              </div>
               <n-switch v-model:value="active" size="small" @change="changetheme">
                 <template #checked-icon>
                   <n-icon :component="Sunny" />
@@ -45,6 +49,19 @@
 
             </div>
           </div>
+          <!--  -->
+          <n-drawer v-model:show="isMedia" width="40%" placement="left">
+            <n-drawer-content>
+              <template #header>
+                Header
+              </template>
+              <template #footer>
+                <n-button>Footer</n-button>
+              </template>
+            </n-drawer-content>
+          </n-drawer>
+          <!--  -->
+
           <n-global-style />
         </n-message-provider>
       </n-config-provider>
@@ -56,14 +73,14 @@
 import Menu from '@/views/layout/menu.vue'
 import Advertise from '@/views/layout/advertise.vue'
 import Login from '@/components/login.vue'
-import { Moon, Sunny } from '@vicons/ionicons5'
+import { Moon, Sunny, MenuSharp } from '@vicons/ionicons5'
 import { ref } from 'vue';
 import { darkTheme } from 'naive-ui'
 import type { GlobalTheme } from 'naive-ui'
 import useUserStore from "@/store/user";
 let userStore = useUserStore();
-
 const active = ref(false)
+const isMedia = ref(false)
 const theme = ref<GlobalTheme | null>(null)
 const changetheme = () => {
   theme.value = active.value == true ? darkTheme : null;
@@ -108,6 +125,10 @@ const changetheme = () => {
 @media (max-width: 820px) {
   .media {
     display: none;
+  }
+
+  .sizeBtn {
+    display: block !important;
   }
 
   .home {

@@ -16,6 +16,10 @@ import VueVideoPlayer from '@videojs-player/vue'
 import 'video.js/dist/video-js.css'
 app.use(VueVideoPlayer)
 
+//无限滚动
+import infiniteScroll from 'vue3-infinite-scroll-better'
+// import infiniteScroll from 'vue3-infinite-scroll-better'
+app.use(infiniteScroll)
 
 
 // import useUserStore from './store/user'
