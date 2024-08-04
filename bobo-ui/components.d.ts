@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Compose: typeof import('./src/components/compose.vue')['default']
     copy: typeof import('./src/components/login copy.vue')['default']
+    Evaluate: typeof import('./src/components/evaluate.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Login: typeof import('./src/components/login.vue')['default']
     Logout: typeof import('./src/components/logout.vue')['default']

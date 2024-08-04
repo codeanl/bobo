@@ -11,10 +11,23 @@ let router = createRouter({
                 {
                     path: '/home',
                     component: () => import('@/views/home.vue'),
+                    meta: {
+                        keepAlive: true,
+                    },
                 },
                 {
                     path: '/setting',
                     component: () => import('@/views/setting.vue'),
+                    meta: {
+                        keepAlive: false,
+                    },
+                },
+                {
+                    path: '/daily',
+                    component: () => import('@/views/daily.vue'),
+                    meta: {
+                        keepAlive: false,
+                    },
                 },
             ]
         },

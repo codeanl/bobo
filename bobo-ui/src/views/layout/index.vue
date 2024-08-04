@@ -22,6 +22,13 @@
               <div style="display: flex;align-items: center;">
                 <n-icon :component="MenuSharp" size="20" style="margin-right: 10px;display: none;" class="sizeBtn"
                   @click="isMedia = !isMedia" />
+                <n-button class="back-btn" @click="goBack" quaternary circle size="small" v-if="back">
+                  <template #icon>
+                    <n-icon>
+                      <ChevronBack />
+                    </n-icon>
+                  </template>
+                </n-button>
                 <span style="font-size: 15px;font-weight: bold;">BOBO社区</span>
               </div>
               <n-switch v-model:value="active" size="small" @change="changetheme">
@@ -44,24 +51,20 @@
               </n-list>
               <!--  -->
               <div :class="{ 'dark-border-3': active, 'no-dark-border-3': !active }">
-                <router-view></router-view>
+                <router-view class="app-wrap" v-slot="{ Component, route }">
+                  <keep-alive>
+                    <component v-if="route.meta.keepAlive" :is="Component" :key="route.path" />
+                  </keep-alive>
+                  <component v-if="!route.meta.keepAlive" :is="Component" :key="route.path" />
+                </router-view>
               </div>
-
             </div>
           </div>
           <!--  -->
-          <n-drawer v-model:show="isMedia" width="40%" placement="left">
-            <n-drawer-content>
-              <template #header>
-                Header
-              </template>
-              <template #footer>
-                <n-button>Footer</n-button>
-              </template>
-            </n-drawer-content>
+          <n-drawer v-model:show="isMedia" width="230px" placement="left">
+            <Menu></Menu>
           </n-drawer>
           <!--  -->
-
           <n-global-style />
         </n-message-provider>
       </n-config-provider>
@@ -73,8 +76,8 @@
 import Menu from '@/views/layout/menu.vue'
 import Advertise from '@/views/layout/advertise.vue'
 import Login from '@/components/login.vue'
-import { Moon, Sunny, MenuSharp } from '@vicons/ionicons5'
-import { ref } from 'vue';
+import { Moon, Sunny, MenuSharp, ChevronBack } from '@vicons/ionicons5'
+import { onMounted, ref, watch } from 'vue';
 import { darkTheme } from 'naive-ui'
 import type { GlobalTheme } from 'naive-ui'
 import useUserStore from "@/store/user";
@@ -86,8 +89,41 @@ const changetheme = () => {
   theme.value = active.value == true ? darkTheme : null;
 };
 
+import { useRouter, useRoute } from 'vue-router';
+const router = useRouter();
+const route = useRoute();
+
+
+const goBack = () => {
+  if (window.history.length <= 1) {
+    router.push({
+      path: '/',
+    });
+  } else {
+    router.go(-1);
+  }
+}
+
+const back = ref(false)
+onMounted(() => {
+  console.log(route.path);
+  if (route.path == '/home' || route.path == '/setting') {
+    back.value = false
+  } else {
+    back.value = true
+  }
+});
+watch(() => route.path, (newPath) => {
+  if (newPath === '/home' || newPath == '/setting') {
+    back.value = false;
+  } else {
+    back.value = true;
+  }
+});
 
 </script>
+
+
 <style scoped>
 .no-dark-border {
   border: 1px solid #efeff6;

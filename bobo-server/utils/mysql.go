@@ -73,6 +73,7 @@ func MakeMigrate(db *gorm.DB) {
 		&model.Article{},
 		&model.OperationLog{},
 		&model.LoginLog{},
+		&model.Comment{},
 	)
 	if err != nil {
 		log.Println("gorm 自动迁移失败: ", err)

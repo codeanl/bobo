@@ -1,11 +1,10 @@
 <template>
-  <n-infinite-scroll style="max-height: 100vh" :distance="10" @load="handleLoad">
+  <n-infinite-scroll style="max-height:  calc(100vh - 80px)" :distance="2" @load="handleLoad">
     <n-list hoverable clickable show-divider>
       <n-list bordered>
         <Compose @submit-success="composeSuccess"></Compose>
       </n-list>
-      <n-list-item ref="scrollContainer" class="list" v-for="(i, index) in dailyList" :key="index"
-        @click="lookInfo(i.id)">
+      <n-list-item class="list" v-for="(i, index) in dailyList" :key="index" @click="lookInfo(i.id)">
         <div class="info">
           <div class="profile">
             <n-avatar round size="medium" :src="i.user.avatar" />
@@ -27,7 +26,7 @@
           </div>
           <!--  -->
           <!-- 图片 -->
-          <div class="images">
+          <div>
             <n-image-group>
               <n-space>
                 <n-image-group>
@@ -68,13 +67,14 @@
             <n-icon size="18">
               <HeartOutline />
             </n-icon>
-            <p>11</p>
+            <p>0</p>
           </div>
           <div class="commit btn">
             <n-icon size="18">
               <ChatbubbleEllipsesOutline />
             </n-icon>
-            <p>11</p>
+            <p v-if="i.comment_count >= 100">{{ (parseInt(i.comment_count, 10) / 1000).toFixed(1) }}k</p>
+            <p v-else>{{ i.comment_count ? i.comment_count : 0 }}</p>
           </div>
           <div class="eye btn">
             <n-icon size="18">
@@ -87,16 +87,18 @@
             <n-icon size="18">
               <ShareSocialOutline />
             </n-icon>
-            <p>11</p>
+            <p>0</p>
           </div>
         </div>
       </n-list-item>
     </n-list>
-    <div v-if="loading" class="text" style="display: flex;align-items: baseline;justify-content: center;">
-      加载中...
-    </div>
-    <div v-if="noMore" class="text" style="display: flex;align-items: baseline;justify-content: center;">
-      没有更多了 🤪
+    <div style="padding: 20px 0">
+      <div v-if="loading" class="text" style="display: flex;align-items: baseline;justify-content: center;">
+        加载中...
+      </div>
+      <div v-if="noMore" class="text" style="display: flex;align-items: baseline;justify-content: center;">
+        没有更多了 🤪
+      </div>
     </div>
   </n-infinite-scroll>
 </template>
@@ -122,34 +124,12 @@ import { DailyList, SaveOrUpdate } from '@/api/daily'
 const returnBr = (i: any) => {
   return i.replace(/\n/g, "<br />")
 }
-import useUserStore from "@/store/user";
-let userStore = useUserStore();
-import { useMessage } from 'naive-ui'
-import { download } from 'naive-ui/es/_utils';
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
   GetData()
 });
 
-const scrollContainerRef = ref(null);
-
-// 定义一个方法来处理滚动事件
-const handleScroll = () => {
-  const scrollElement = scrollContainerRef.value;
-  if (!scrollElement) return;
-
-  // 计算是否滚动到底部
-  const isAtBottom = scrollElement.scrollHeight - scrollElement.scrollTop === scrollElement.clientHeight;
-  if (isAtBottom) {
-    console.log('滚动到底部了！');
-    // 执行加载更多数据的逻辑
-  }
-};
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
-});
-
+const message = useMessage();
 
 const page_num = ref(1)
 const page_size = ref(10)
@@ -164,6 +144,8 @@ const GetData = async () => {
   if (res.code == 200) {
     dailyList.value = res.data
     total.value = res.count
+  } else {
+    message.error(res.message)
   }
 }
 
@@ -182,8 +164,12 @@ const downloadZip = (url) => {
   window.open(url)
 }
 
+
+import { useRouter } from 'vue-router';
+import { useMessage } from 'naive-ui';
+const router = useRouter();
 const lookInfo = (id) => {
-  console.log(id);
+  router.push({ path: '/daily', query: { id: id } });
 }
 
 const loading = ref(false)
@@ -191,6 +177,8 @@ const noMore = ref(false)
 const total = ref(0)
 
 const handleLoad = async () => {
+  console.log(111);
+
   if (loading.value || noMore.value)
     return
   if (page_num.value > Math.floor(total.value / page_size.value)) {
@@ -199,7 +187,6 @@ const handleLoad = async () => {
     return
   }
   loading.value = true
-  // GetData()
   page_num.value++
   console.log("获取第" + page_num.value + "页数据");
   let res: any = await DailyList({
@@ -288,8 +275,6 @@ const handleLoad = async () => {
 }
 
 .post-img {
-
-
   img {
     width: 100%;
     height: 100%;

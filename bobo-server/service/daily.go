@@ -22,6 +22,7 @@ func (*Daily) DailyList(req req.GetDailyListReq) ([]resp.GetDailyListResp, int) 
 		list[item].User = utils.CopyProperties[resp.UserInfoResp](userInfo)
 		//TODO  评论数 收藏数 分享数 点赞数
 		list[item].ViewCount = utils.Redis.ZScore(KEY_DAILY_VIEW_COUNT, strconv.Itoa(int(list[item].ID)))
+		list[item].CommentCount = int(dao.Count(model.Comment{}, "topic_id = ? AND type=?", list[item].ID, 1))
 	}
 	return list, int(count)
 }
@@ -38,6 +39,7 @@ func (*Daily) DailyInfo(id int) (data *resp.GetDailyListResp, code int) {
 	data.ViewCount = utils.Redis.ZScore(KEY_DAILY_VIEW_COUNT, strconv.Itoa(id))
 	// * 目前请求一次就会增加访问量, 即刷新可以刷访问量
 	utils.Redis.ZincrBy(KEY_DAILY_VIEW_COUNT, strconv.Itoa(id), 1)
+	data.CommentCount = int(dao.Count(model.Comment{}, "topic_id = ? AND type=?", data.ID, 1))
 	return data, r.OK
 }
 
